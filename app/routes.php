@@ -20,38 +20,41 @@ Route::get('/', function()
 Route::api ( ['version' => 'v1' , 'prefix' => 'api' , 'protected' => false ] , function() //'before' => 'checktoken' ,
 {
 
-	/*Route::get ( 'scrape/american' , function() {
+
+
+
+	/*route::get ( 'scrape/american' , function() {
 
         $response = array( );
 
 
-        $query = ' SELECT items.*, category.name FROM items,category ' .
-            ' WHERE items.category_id = category.category_id AND category.name = "american" limit 0,12 ';
+        $query = ' select items.*, category.name from items,category ' .
+            ' where items.category_id = category.category_id and category.name = "american" limit 0,12 ';
 
-        $news = DB::select ( $query ) ;
-        //echo '<pre>';print_r();die('======Debugging=======');
+        $news = db::select ( $query ) ;
+        //echo '<pre>';print_r();die('======debugging=======');
 
         $cnews = array () ;
 
         if( count($news) > 0 ){
 
             foreach ( $news as $news_ ) {
-                //Number of vis by users
-                $viewCount = ! empty ( $news_->number_of_views ) ? $news_->number_of_views : "0" ;
-                $nwsRow = [
+                //number of vis by users
+                $viewcount = ! empty ( $news_->number_of_views ) ? $news_->number_of_views : "0" ;
+                $nwsrow = [
                     'item_id'      => $news_->item_id ,
                     'phone'        => $news_->phone ,
                     'description'      => $news_->description ,
-                    'image'        => Helpers::build_image ( $news_->image ) ,
+                    'image'        => helpers::build_image ( $news_->image ) ,
                 ] ;
 
-                $cnews[] = ( object ) $nwsRow ;
+                $cnews[] = ( object ) $nwsrow ;
             }
 
-            $response = array( 'status'=> 'success', 'message'=> 'Successfully executed','data_count' => count($news) );
+            $response = array( 'status'=> 'success', 'message'=> 'successfully executed','data_count' => count($news) );
 
         }else{
-            $response = array( 'status'=> 'fail', 'message'=> 'Sorry, There is no relevant  data.', );
+            $response = array( 'status'=> 'fail', 'message'=> 'sorry, there is no relevant  data.', );
         }
 
 
@@ -61,49 +64,49 @@ Route::api ( ['version' => 'v1' , 'prefix' => 'api' , 'protected' => false ] , f
     } ) ;*/
 
 
-	Route::get ( 'scrape/american/{category}' , function($category) {
+	route::get ( 'scrape/american/{category}' , function($category) {
 
 
 		$response = array( );
-		$catArray = array('cadillac','dodgenchrysler','chevrolet','gmc','fordnlincoln','hummer','jeep');
+		$catarray = array('cadillac','dodgenchrysler','chevrolet','gmc','fordnlincoln','hummer','jeep');
 
 		$cnews = array () ;
 
-		if( !empty($category) && in_array($category,$catArray)){
+		if( !empty($category) && in_array($category,$catarray)){
 
-			//Limit Query
-			$limitArr = Helpers::apiLimitQuery();
+			//limit query
+			$limitarr = helpers::apilimitquery();
 
-			$query = ' SELECT items.*, category.name FROM items,category ' .
-				' WHERE items.category_id = category.category_id AND category.name = "'.$category.'" '.$limitArr['query'].' ';
+			$query = ' select items.*, category.name from items,category ' .
+				' where items.category_id = category.category_id and category.name = "'.$category.'" '.$limitarr['query'].' ';
 
-			$news = DB::select ( $query ) ;
-			//echo '<pre>';print_r();die('======Debugging=======');
+			$news = db::select ( $query ) ;
+			//echo '<pre>';print_r();die('======debugging=======');
 
 			if( count($news) > 0 ){
 
 				foreach ( $news as $news_ ) {
 
-					$nwsRow = [
+					$nwsrow = [
 						'item_id'      => $news_->item_id ,
 						'phone'        => $news_->phone ,
 						'phone1'        => $news_->phone1 ,
 						'phone2'        => $news_->phone2 ,
 						'description'      => $news_->description ,
-						'image'        => Helpers::build_image ( $news_->image, $category ) ,
+						'image'        => helpers::build_image ( $news_->image, $category ) ,
 					] ;
 
-					$cnews[] = ( object ) $nwsRow ;
+					$cnews[] = ( object ) $nwsrow ;
 				}
 
-				$response = array( 'status'=> 'success', 'message'=> 'Successfully executed','data_count' => count($news) );
+				$response = array( 'status'=> 'success', 'message'=> 'successfully executed','data_count' => count($news) );
 
 			}else{
-				$response = array( 'status'=> 'fail', 'message'=> 'Sorry, There is no relevant data found.' );
+				$response = array( 'status'=> 'fail', 'message'=> 'sorry, there is no relevant data found.' );
 			}
 
 		}else{
-			$response = array( 'status'=> 'fail', 'message'=> 'Sorry, Request can not be executed.' );
+			$response = array( 'status'=> 'fail', 'message'=> 'sorry, request can not be executed.' );
 		}
 
 		return $response + array( 'results' => $cnews )  ;

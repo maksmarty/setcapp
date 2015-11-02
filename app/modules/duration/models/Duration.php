@@ -1,0 +1,35 @@
+<?php 
+/*
+ * Model        : Category
+ * Descripttion : Category model for handle login,registration,logout and user's setting.
+ */
+
+namespace App\Modules\Duration\Models;
+
+use App,
+    View,
+    Helpers;
+use Input,
+    Session,
+    Config,
+    Auth,
+    DB;
+
+
+class Duration extends \Eloquent {
+
+  
+	/**
+	 * The database table used by the model.
+	 *
+	 * @var string
+	 */
+	protected $table = "course_duration";
+	protected $guarded = ["course_duration_id"];
+    public $primaryKey = 'course_duration_id';
+	//protected $softDelete = true;
+
+
+
+
+}

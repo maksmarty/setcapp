@@ -122,6 +122,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Dingo\Api\ApiServiceProvider',
+		'App\Modules\Duration\ServiceProvider' ,
+		'App\Modules\Course\ServiceProvider' ,
 	),
 
 	/*

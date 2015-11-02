@@ -26,8 +26,10 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
-	'local' => array('homestead'),
-
+    'local' => array('Akbars-MacBook-Pro.local'),
+    //'staging' => array('li274-150'),//On the basis of machine hostname
+    //'staging' => array('pay.jighi.com'),//On the basis of domain name ( Not working, lets look at later )
+    //'production' => array()
 ));
 
 /*

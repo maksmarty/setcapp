@@ -46,6 +46,17 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 |
 */
 
+
+App::error(function(ModelNotFoundException $modelNotFoundException){
+	$errorResponse = [
+		'status'=> 'fail',
+		'message'   => $modelNotFoundException->getMessage()
+	];
+
+	return Response::json($errorResponse, 404);     //404 = Not found
+});
+
+
 App::error(function(Exception $exception, $code)
 {
 	Log::error($exception);
