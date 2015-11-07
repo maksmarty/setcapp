@@ -124,6 +124,7 @@ return array(
 		'Dingo\Api\ApiServiceProvider',
 		'App\Modules\Duration\ServiceProvider' ,
 		'App\Modules\Course\ServiceProvider' ,
+		'Jenssegers\Agent\AgentServiceProvider',
 	),
 
 	/*
@@ -192,6 +193,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'API'             => 'Dingo\Api\Facades\API',
 		'Controller'      => 'Dingo\Api\Routing\Controller',
+		'Agent' => 'Jenssegers\Agent\Facades\Agent',
 
 	),
 
