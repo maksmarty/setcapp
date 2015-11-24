@@ -39,22 +39,23 @@ class DurationController extends \BaseController {
 
     public function index() {
 
+
         $durations = Duration::all();
+
 
         $items = array();
         foreach($durations as $duration){
 
             $items[] = array(
-                'course_duration_id' => $duration->course_duration_id,
-                'from' => $duration->from,
-                'to' => $duration->to,
+                'level' => $duration->level,
+                'date' => $duration->date,
+                'time' => $duration->time,
+                'location' => $duration->location,
             );
-
 
         }
 
         $response = array( 'status'=> 'success', 'message'=> 'Successfully executed','data_count' => count($items) );
-
         return $response + array( 'results' => $items )  ;
     }
 
@@ -70,8 +71,13 @@ class DurationController extends \BaseController {
 
         // validate
         $rules = array(
-            'date_duration'       => 'required',
+            'level'      => 'required',
+            'date'       => 'required',
+            'time'       => 'required',
+            'location'   => 'required',
+            //'status'     => 'required',
         );
+
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
@@ -79,40 +85,33 @@ class DurationController extends \BaseController {
             $response = array( 'status'=> 'fail', 'message'=> $validator->messages()->first() );
         } else {
 
-            $date_duration = Input::get('date_duration');
 
-            $dateArr = explode('-',$date_duration);
+            $dupli = Duration::where('level','=',Input::get('level'))
+                ->where('date','=',Input::get('date'))
+                ->where('time','=',Input::get('time'))
+                ->where('location','=',Input::get('location'))->first();
 
+            //echo '<pre>';print_r($dupli);die('======Debugging=======');
 
-            if( !empty($dateArr) && ( count($dateArr) === 2 ) ){
-
-                if( !empty($dateArr[1]) ){
-
-                    $parsed_date = str_replace('/', '-', $dateArr[1]);
-                    $dateString = strtotime($parsed_date);
-                    $to = date('Y-m-d',$dateString);
-
-                    $from = date('Y-m-d',mktime(0,0,0,date('m',$dateString),$dateArr[0],date('Y',$dateString)));
-
-                    // store
-                    $duration = new Duration();
-                    $duration->from       = $from;
-                    $duration->to       = $to;
-                    $duration->save();
-
-                    if( !empty($duration->course_duration_id) ){
-                        $response = array( 'status'=> 'success', 'message'=> 'Successfully added' );
-                    }else{
-                        $response = array( 'status'=> 'fail', 'message'=> 'Something went wrong.' );
-                    }
-
-                }else{
-                    $response = array( 'status'=> 'fail', 'message'=> 'Please correct the format of date like 12-20/09/2015' );
-                }
-
+            if( !empty($dupli->course_id) ){
+                $response = array( 'status'=> 'fail', 'message'=> 'Duplicate record.' );
             }else{
-                $response = array( 'status'=> 'fail', 'message'=> 'Please correct the format of date like 12-20/09/2015' );
+                // store
+                $duration = new Duration();
+                $duration->level        = trim(Input::get('level'));
+                $duration->date         = trim(Input::get('date'));
+                $duration->time         = trim(Input::get('time'));
+                $duration->location     = trim(Input::get('location'));
+                //$duration->status       = Input::get('status');
+                $duration->save();
+
+                if( !empty($duration->course_id) ){
+                    $response = array( 'status'=> 'success', 'message'=> 'Successfully added' );
+                }else{
+                    $response = array( 'status'=> 'fail', 'message'=> 'Something went wrong.' );
+                }
             }
+
 
 
         }
@@ -129,18 +128,18 @@ class DurationController extends \BaseController {
      * curl --user admin:admin localhost/project/api/v1/pages/2
      */
 
-    public function show($id) {
-
-        $page = Page::where('id', $id)
-            ->take(1)
-            ->get();
-
-        return Response::json(array(
-            'status' => 'success',
-            'pages' => $page->toArray()),
-            200
-        );
-    }
+//    public function show($id) {
+//
+//        $page = Page::where('id', $id)
+//            ->take(1)
+//            ->get();
+//
+//        return Response::json(array(
+//            'status' => 'success',
+//            'pages' => $page->toArray()),
+//            200
+//        );
+//    }
 
 
     /**
@@ -155,13 +154,26 @@ class DurationController extends \BaseController {
 
         $input = Input::all();
 
-        $page = Page::find($id);
+        $page = Duration::find($id);
 
-        if ( $input['title'] ) {
-            $page->title =$input['title'];
+        if ( !empty($input['level']) ) {
+            $page->level =$input['level'];
         }
-        if ( $input['slug'] ) {
-            $page->slug =$input['slug'];
+
+        if ( !empty($input['date']) ) {
+            $page->date =$input['date'];
+        }
+
+        if ( !empty($input['time']) ) {
+            $page->time =$input['time'];
+        }
+
+        if ( !empty($input['location']) ) {
+            $page->location =$input['location'];
+        }
+
+        if ( !empty($input['status']) ) {
+            $page->status =$input['status'];
         }
 
         $page->save();
@@ -182,7 +194,7 @@ class DurationController extends \BaseController {
      */
 
     public function destroy($id) {
-        $page = Page::find($id);
+        $page = Duration::find($id);
 
         $page->delete();
 

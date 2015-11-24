@@ -24,9 +24,9 @@ class Course extends \Eloquent {
 	 *
 	 * @var string
 	 */
-	protected $table = "course";
-	protected $guarded = ["course_id"];
-    public $primaryKey = 'course_id';
+	protected $table = "registration";
+	protected $guarded = ["registration_id"];
+    public $primaryKey = 'registration_id';
 	//protected $softDelete = true;
 
 

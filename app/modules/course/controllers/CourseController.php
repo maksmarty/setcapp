@@ -8,6 +8,7 @@
 namespace App\Modules\Course\Controllers;
 
 use App\Modules\Course\Models\Course;
+use App\Modules\Duration\Models\Duration;
 use App,
     View,
     Helpers,
@@ -70,13 +71,15 @@ class CourseController extends \BaseController {
 
         // validate
         $rules = array(
-            'course_level_id'       => 'required',
-            'course_duration_id'       => 'required',
-            'first_name'       => 'required',
-            'last_name'       => 'required',
-            'email'       => 'required|email',
-            'phone'       => 'required|numeric',
-            //'comments'       => 'required',
+            'level'      => 'required',
+            'date'       => 'required',
+            'time'       => 'required',
+            'location'   => 'required',
+            'name'       => 'required',
+            //'last_name'  => 'required',
+            'email'      => 'required|email',
+            'phone'      => 'required',
+            'comments'       => 'required',
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -85,18 +88,45 @@ class CourseController extends \BaseController {
             $response = array( 'status'=> 'fail', 'message'=> $validator->messages()->first() );
         } else {
 
-            // store
-            $duration = new Course();
-            $duration->course_level_id = Input::get('course_level_id');
-            $duration->course_duration_id = Input::get('course_duration_id');
-            $duration->first_name = Input::get('first_name');
-            $duration->last_name = Input::get('last_name');
-            $duration->email = Input::get('email');
-            $duration->phone = Input::get('phone');
-            $duration->comments       = Input::get('comments');
-            $duration->save();
 
-            if( !empty($duration->course_id) ){
+            $duration = Duration::where('level','=',Input::get('level'))
+                ->where('date','=',Input::get('date'))
+                ->where('time','=',Input::get('time'))
+                ->where('location','=',Input::get('location'))->first();
+
+            // store
+            $duration_course = new Course();
+            //echo '<pre>';print_r(1);die('======Debugging=======');
+            $duration_course->course_id = !empty($duration->course_id) ? $duration->course_id : '' ;
+            $duration_course->name = Input::get('name');
+            $duration_course->email = Input::get('email');
+            $duration_course->phone = Input::get('phone');
+            $duration_course->comments       = Input::get('comments');
+            $duration_course->save();
+
+
+
+            //Send Mail to Admin
+            \Mail::send('emails.admin', array(
+                                            'level'=> Input::get('level'),
+                                            'date'=> Input::get('date'),
+                                            'time'=> Input::get('time'),
+                                            'location'=> Input::get('location'),
+                                            'name'=> Input::get('name'),
+                                            'email'=> Input::get('email'),
+                                            'phone'=> Input::get('phone'),
+                                            'comments'=> Input::get('comments')
+                                        ),
+                                    function($message){
+                                        $message->to('abdulmec1976@gmail.com', Input::get('Setcapp Application'))->subject(sprintf('Registered by %s on %s %s',Input::get('name'),Input::get('date'),Input::get('time')));
+            });
+
+            //Send welcome mail to user
+            \Mail::send('emails.welcome', array('firstname'=> Input::get('name')), function($message){
+                $message->to(Input::get('email'), Input::get('name'))->subject('Welcome to the Setcapp App!');
+            });
+
+            if( !empty($duration_course->registration_id) ){
                 $response = array( 'status'=> 'success', 'message'=> 'Successfully added' );
             }else{
                 $response = array( 'status'=> 'fail', 'message'=> 'Something went wrong.' );

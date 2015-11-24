@@ -24,9 +24,9 @@ class Duration extends \Eloquent {
 	 *
 	 * @var string
 	 */
-	protected $table = "course_duration";
-	protected $guarded = ["course_duration_id"];
-    public $primaryKey = 'course_duration_id';
+	protected $table = "course";
+	protected $guarded = ["course_id"];
+    public $primaryKey = 'course_id';
 	//protected $softDelete = true;
 
 

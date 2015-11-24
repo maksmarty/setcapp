@@ -13,13 +13,16 @@ class CreateCourseDurationTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create("course_duration", function($table)
+		Schema::create("course", function($table)
 		{
 			$table->engine = "InnoDB";
 
-			$table->increments("course_duration_id");
-			$table->date("from");
-			$table->date("to");
+			$table->increments("course_id");
+			$table->string("level");
+			$table->string("date");
+			$table->string("time");
+			$table->string("location");
+			$table->tinyInteger('status')->unsigned()->default('1')->comment('1=Active,0=Inactive');
 			$table->timestamps();
 		});
 	}
@@ -31,7 +34,7 @@ class CreateCourseDurationTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists("course_duration");
+		Schema::dropIfExists("course");
 	}
 
 }

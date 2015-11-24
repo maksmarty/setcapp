@@ -13,18 +13,19 @@ class CreateCourseTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create("course", function($table)
+		Schema::create("registration", function($table)
 		{
 			$table->engine = "InnoDB";
 
-			$table->increments("course_id");
-			$table->mediumInteger('course_level_id')->unsigned();
-			$table->mediumInteger('course_duration_id')->unsigned();
-			$table->string('first_name');
-			$table->string('last_name')->nullable();
-			$table->string('email')->unique();
+			$table->increments("registration_id");
+			$table->mediumInteger('course_id')->unsigned();
+			//$table->mediumInteger('course_duration_id')->unsigned();
+			$table->string('name');
+			//$table->string('last_name')->nullable();
+			$table->string('email');//->unique()
 			$table->bigInteger('phone')->unsigned()->nullable();
 			$table->text('comments')->nullable();
+			$table->tinyInteger('status')->unsigned()->default('0')->comment('0=Ready to send,1=sent to admin,2=sent to both');
 			$table->timestamps();
 		});
 	}
@@ -36,7 +37,7 @@ class CreateCourseTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists("course");
+		Schema::dropIfExists("registration");
 	}
 
 }
